@@ -3,6 +3,7 @@ mod config;
 mod boot;
 mod errors;
 mod controllers;
+mod idempotency;
 
 use config::settings;
 
