@@ -7,13 +7,13 @@ edition = "2021"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dotenvy = "0.15"
-sqlx = { version = "0.7", features = ["macros","postgres", "runtime-tokio-native-tls", "chrono"] }
+sqlx = { version = "0.8", features = ["macros","postgres", "runtime-tokio-native-tls", "chrono"] }
 actix-web = { version = "4.9", default-features = false, features = ["cookies", "secure-cookies", "macros"] }
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
-sea-query = "0.31"
-sea-query-binder = { version = "0.6", features = [
+sea-query = "0.32"
+sea-query-binder = { version = "0.7", features = [
     "sqlx-postgres",
     "with-chrono",
     "with-json",
@@ -32,4 +32,5 @@ tracing-log = "0.2"
 anyhow = "1"
 thiserror = "1"
 strum = { version = "0.26", features = ["derive"] }
+uuid = { version = "1", features = ["v4", "serde"] }
 
