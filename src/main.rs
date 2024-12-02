@@ -2,6 +2,7 @@
 mod config;
 mod boot;
 mod errors;
+mod controllers;
 
 use config::settings;
 
