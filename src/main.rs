@@ -1,3 +1,4 @@
+#![allow(unused)]
 mod config;
 mod boot;
 mod errors;
@@ -18,9 +19,8 @@ fn main() -> Result<(), crate::errors::AppError> {
                 //let _ = boot::redis::init().unwrap();
             }
             // Launching web server
-            //config::boot::launch().await
-            todo!()
-        });
+            boot::app::launch().await
+        })?;
 
     Ok(())
 }
