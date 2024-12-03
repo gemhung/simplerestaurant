@@ -7,10 +7,10 @@ BEGIN
       EXECUTE format('
           CREATE TABLE table%s.ordered_items (
               id SERIAL PRIMARY KEY,                -- Primary key
+              order_id TEXT NOT NULL UNIQUE,        -- 
               name VARCHAR(255) NOT NULL,           -- Name of the item (non-null string)
               status VARCHAR(50) NOT NULL,          -- Status of the item (non-null string)
               cooking_time BIGINT NOT NULL,         -- Cooking time in seconds
-              idempotent_token VARCHAR(255) UNIQUE, -- Unique idempotent token
               created_at TIMESTAMP DEFAULT NOW()    -- Timestamp of creation with default value
           );
       ', i);
