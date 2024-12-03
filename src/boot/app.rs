@@ -37,8 +37,8 @@ fn app() -> App<
 }
 
 fn routes(cfg: &mut ServiceConfig) {
-    cfg.route("/items/{item_name}", get().to(controllers::get_one_item));
-    cfg.route("/items", get().to(controllers::get_all_items));
+    cfg.route("/items/{item_name}", get().to(controllers::get_one_ordered_item));
+    cfg.route("/items", get().to(controllers::get_all_ordered_items));
     cfg.route("/items", post().to(controllers::create_orders));
     cfg.route("/items", delete().to(controllers::delete_orders));
 }

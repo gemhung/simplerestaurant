@@ -6,19 +6,39 @@ use sqlx::{Executor, PgPool};
 use sqlx::{Postgres, Transaction};
 use uuid::Uuid;
 
+use crate::models::schema::idempotency::HeaderPairRecord;
+
+/*
 #[derive(Debug, sqlx::Type)]
 #[sqlx(type_name = "header_pair")]
 struct HeaderPairRecord {
     name: String,
     value: Vec<u8>,
 }
+*/
 
 pub async fn get_saved_response(
     pool: &PgPool,
     idempotency_key: &IdempotencyKey,
-    user_id: Uuid,
+    order_id: &Uuid,
 ) -> Result<Option<HttpResponse>, anyhow::Error> {
-    let saved_response = sqlx::query!(
+    //let saved_response = sqlx::query!(
+    //    r#"
+    //    SELECT
+    //        response_status_code as "response_status_code!",
+    //        response_headers as "response_headers!: Vec<HeaderPairRecord>",
+    //        response_body as "response_body!"
+    //    FROM idempotency
+    //    WHERE
+    //      user_id = $1 AND
+    //      idempotency_key = $2
+    //    "#,
+    //    user_id,
+    //    idempotency_key.as_ref()
+    //)
+    //.fetch_optional(pool)
+    //.await?;
+    let saved_response = sqlx::query_as::<_, crate::models::schema::idempotency::Model>(
         r#"
         SELECT 
             response_status_code as "response_status_code!", 
@@ -26,12 +46,12 @@ pub async fn get_saved_response(
             response_body as "response_body!"
         FROM idempotency
         WHERE 
-          user_id = $1 AND
+          order_id = $1 AND
           idempotency_key = $2
         "#,
-        user_id,
-        idempotency_key.as_ref()
     )
+    .bind(order_id)
+    .bind(idempotency_key.as_ref())
     .fetch_optional(pool)
     .await?;
     if let Some(r) = saved_response {
@@ -64,12 +84,13 @@ pub async fn save_response(
         }
         h
     };
+    /*
     transaction
         .execute(sqlx::query_unchecked!(
             r#"
         UPDATE idempotency
-        SET 
-            response_status_code = $3, 
+        SET
+            response_status_code = $3,
             response_headers = $4,
             response_body = $5
         WHERE
@@ -82,6 +103,28 @@ pub async fn save_response(
             headers,
             body.as_ref()
         ))
+        .await?;
+    */
+    transaction
+        .execute(
+            sqlx::query(
+                r#"
+                    UPDATE idempotency
+                    SET 
+                        response_status_code = $3, 
+                        response_headers = $4,
+                        response_body = $5
+                    WHERE
+                        user_id = $1 AND
+                        idempotency_key = $2
+                    "#,
+            )
+            .bind(user_id)
+            .bind(idempotency_key.as_ref())
+            .bind(status_code)
+            .bind(headers)
+            .bind(body.as_ref()),
+        )
         .await?;
     transaction.commit().await?;
 
@@ -99,30 +142,44 @@ pub enum NextAction {
 pub async fn try_processing(
     pool: &PgPool,
     idempotency_key: &IdempotencyKey,
-    user_id: Uuid,
+    order_id: &Uuid,
 ) -> Result<NextAction, anyhow::Error> {
     let mut transaction = pool.begin().await?;
+    /*
     let query = sqlx::query!(
         r#"
         INSERT INTO idempotency (
-            user_id, 
+            user_id,
+            idempotency_key,
+            created_at
+        )
+        VALUES ($1, $2, now())
+        ON CONFLICT DO NOTHING
+        "#,
+        user_id,
+        idempotency_key.as_ref()
+    );
+    */
+    let query = sqlx::query(
+        r#"
+        INSERT INTO idempotency (
+            order_id, 
             idempotency_key,
             created_at
         ) 
         VALUES ($1, $2, now()) 
         ON CONFLICT DO NOTHING
         "#,
-        user_id,
-        idempotency_key.as_ref()
-    );
+    )
+    .bind(order_id)
+    .bind(idempotency_key.as_ref());
     let n_inserted_rows = transaction.execute(query).await?.rows_affected();
     if n_inserted_rows > 0 {
         Ok(NextAction::StartProcessing(transaction))
     } else {
-        let saved_response = get_saved_response(pool, idempotency_key, user_id)
+        let saved_response = get_saved_response(pool, idempotency_key, order_id)
             .await?
             .ok_or_else(|| anyhow::anyhow!("We expected a saved response, we didn't find it"))?;
         Ok(NextAction::ReturnSavedResponse(saved_response))
     }
 }
-

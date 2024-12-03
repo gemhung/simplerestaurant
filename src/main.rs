@@ -4,6 +4,8 @@ mod boot;
 mod errors;
 mod controllers;
 mod idempotency;
+mod models;
+mod utils;
 
 use config::settings;
 
