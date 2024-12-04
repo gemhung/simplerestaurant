@@ -11,10 +11,10 @@ BEGIN
       EXECUTE format('
             CREATE TABLE table%s.idempotency (
                 idempotency_key TEXT NOT NULL,
-                response_status_code SMALLINT NOT NULL,
-                response_headers header_pair[] NOT NULL,
-                response_body BYTEA NOT NULL,
-                created_at timestamptz NOT NULL,
+                response_status_code SMALLINT, 
+                response_headers header_pair[],
+                response_body BYTEA,
+                created_at timestamp NOT NULL,
                 PRIMARY KEY(idempotency_key)
             );
       ', i);

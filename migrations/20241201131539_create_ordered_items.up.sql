@@ -6,7 +6,7 @@ BEGIN
       -- Create the ordered_items table within the schema
       EXECUTE format('
           CREATE TABLE table%s.ordered_items (
-              id SERIAL PRIMARY KEY,                -- Primary key
+              id BIGSERIAL PRIMARY KEY,                -- Primary key
               name VARCHAR(255) NOT NULL,           -- Name of the item (non-null string)
               status VARCHAR(50) NOT NULL,          -- Status of the item (non-null string)
               cooking_time BIGINT NOT NULL,         -- Cooking time in seconds
