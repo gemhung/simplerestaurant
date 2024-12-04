@@ -10,7 +10,7 @@ use actix_web::HttpServer;
 
 pub async fn launch() -> Result<(), actix_web::Error> {
     HttpServer::new(move || app())
-        .bind(("0.0.0.0", 8080))?
+        .bind(("127.0.0.1", 8080))?
         .run()
         .await?;
 
@@ -37,8 +37,11 @@ fn app() -> App<
 }
 
 fn routes(cfg: &mut ServiceConfig) {
-    cfg.route("/items/{item_name}", get().to(controllers::get_one_ordered_item));
     cfg.route("/items", get().to(controllers::get_all_ordered_items));
+    cfg.route(
+        "/items/{item_name}",
+        get().to(controllers::get_specified_ordered_items),
+    );
     cfg.route("/items", post().to(controllers::create_orders));
     cfg.route("/items", delete().to(controllers::delete_orders));
 }
