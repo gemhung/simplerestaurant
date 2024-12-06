@@ -24,7 +24,7 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
 pub struct TestApp {
     pub address: String,
     pub port: u16,
-    pub db_pool: PgPool,
+    //pub db_pool: PgPool,
     //pub email_server: MockServer,
     //pub test_user: TestUser,
     pub api_client: reqwest::Client,
@@ -139,13 +139,22 @@ impl TestApp {
     //    self.get_publish_newsletter().await.text().await.unwrap()
     //}
 
-    pub async fn post_publish_newsletter<Body>(&self, body: &Body) -> reqwest::Response
+    pub async fn post_create_orders<Body>(&self, body: &Body) -> reqwest::Response
     where
         Body: serde::Serialize,
     {
         self.api_client
-            .post(&format!("{}/admin/newsletters", &self.address))
-            .form(body)
+            .post(&format!("{}/items", &self.address))
+            .json(body)
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
+
+    pub async fn get_all_items(&self, table: i32) -> reqwest::Response {
+        self.api_client
+            .get(&format!("{}/items", &self.address))
+            .query(&[("table", table.to_string())])
             .send()
             .await
             .expect("Failed to execute request.")
@@ -207,7 +216,7 @@ pub async fn spawn_app() -> TestApp {
     let test_app = TestApp {
         address: format!("http://localhost:{}", application_port),
         port: application_port,
-        db_pool: database::load().await.expect("Database failed to load"),
+        //db_pool: database::load().await.expect("Database failed to load"),
         api_client: client,
     };
 

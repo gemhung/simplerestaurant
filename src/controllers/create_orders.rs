@@ -6,15 +6,16 @@ use actix_web::http::header::ContentType;
 use actix_web::web;
 use actix_web::HttpResponse;
 use rand::Rng;
+use sqlx::PgPool;
 use sqlx::{Executor, Postgres, Transaction};
 use std::fmt::Write;
 use uuid::Uuid;
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct CreateOrder {
-    item_name: String,
-    table: i32,
-    idempotency_key: String,
+    pub item_name: String,
+    pub table: i32,
+    pub idempotency_key: String,
 }
 
 pub async fn create_orders(
@@ -23,14 +24,14 @@ pub async fn create_orders(
         idempotency_key,
         table,
     }): web::Json<CreateOrder>,
+    pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, crate::errors::AppError> {
     // Validation
     let table = controllers_utils::validate_table(table)?;
     let idempotency_key: IdempotencyKey = idempotency_key.try_into().map_err(e400)?;
     tracing::debug!("{item_name}, {table}, {idempotency_key:?}");
     // Logic
-    let pool = crate::boot::database::db();
-    let mut transaction = match try_processing(pool, table, &idempotency_key)
+    let mut transaction = match try_processing(&pool, table, &idempotency_key)
         .await
         .map_err(e500)?
     {

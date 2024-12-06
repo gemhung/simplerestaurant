@@ -1,19 +1,8 @@
+use crate::config::configuration::DatabaseSettings;
 use crate::config::settings;
+use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
 use std::str::FromStr;
-
-pub static DB: std::sync::OnceLock<sqlx::Pool<sqlx::Postgres>> = std::sync::OnceLock::new();
-
-#[inline]
-pub fn db() -> &'static sqlx::Pool<sqlx::Postgres> {
-    DB.get().expect("DB failed to load")
-}
-
-pub async fn init() -> Result<(), sqlx::Error> {
-    let pool = load().await?;
-    DB.set(pool).unwrap();
-
-    Ok(())
-}
 
 pub async fn load() -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
     let settings = crate::config::configuration::settings();
@@ -26,4 +15,8 @@ pub async fn load() -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
         .min_connections(parallel_num as u32)
         .connect_with(connect_opts)
         .await
+}
+
+pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
+    PgPoolOptions::new().connect_lazy_with(configuration.connect_options())
 }

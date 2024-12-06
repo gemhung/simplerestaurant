@@ -20,10 +20,17 @@ pub async fn launch(
     let listener = TcpListener::bind(address)?;
     let port = listener.local_addr().unwrap().port();
 
-    Ok((HttpServer::new(app).listen(listener)?.run(), port))
+    Ok((
+        HttpServer::new(move || app(&configuration))
+            .listen(listener)?
+            .run(),
+        port,
+    ))
 }
 
-fn app() -> App<
+fn app(
+    configuration: &crate::config::configuration::Settings,
+) -> App<
     impl ServiceFactory<
         ServiceRequest,
         Response = ServiceResponse<impl actix_web::body::MessageBody>,
@@ -32,11 +39,15 @@ fn app() -> App<
         InitError = (),
     >,
 > {
+    let db_pool = crate::boot::database::get_connection_pool(&configuration.database);
+    let db_pool = actix_web::web::Data::new(db_pool);
+
     App::new()
         // Middlewares
         .wrap(actix_web::middleware::NormalizePath::trim())
         // Routes
         .configure(routes)
+        .app_data(db_pool.clone())
         .default_service(web::to(actix_web::HttpResponse::NotFound))
 }
 

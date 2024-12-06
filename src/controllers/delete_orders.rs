@@ -6,6 +6,7 @@ use actix_web::http::header::ContentType;
 use actix_web::web;
 use actix_web::HttpResponse;
 use rand::Rng;
+use sqlx::PgPool;
 use sqlx::{Executor, Postgres, Transaction};
 use std::fmt::Write;
 use uuid::Uuid;
@@ -23,14 +24,14 @@ pub async fn delete_orders(
         item_id,
         idempotency_key,
     }): web::Json<DeleteOrder>,
+    pool: web::Data<PgPool>,
 ) -> impl actix_web::Responder {
     // Validation: table
     let table = controllers_utils::validate_table(table)?;
     let idempotency_key: IdempotencyKey = idempotency_key.try_into().map_err(e400)?;
     tracing::debug!("{item_id}, {table}, {idempotency_key:?}");
     // Logic
-    let pool = crate::boot::database::db();
-    let mut transaction = match try_processing(pool, table, &idempotency_key)
+    let mut transaction = match try_processing(&pool, table, &idempotency_key)
         .await
         .map_err(e500)?
     {

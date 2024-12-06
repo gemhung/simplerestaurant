@@ -10,11 +10,14 @@ pub struct Filter {
     pub name: Option<String>,
 }
 
-pub async fn get_all_ordered_items(filter: web::Query<Filter>) -> impl actix_web::Responder {
+pub async fn get_all_ordered_items(
+    filter: web::Query<Filter>,
+    pool: web::Data<PgPool>,
+) -> impl actix_web::Responder {
     // Validation: table
     let table = controllers_utils::validate_table(filter.table)?;
     // Logic
-    let pool = crate::boot::database::db();
+    let pool: &PgPool = &pool;
     let select_sql = format!(
         r#"
             SELECT *
@@ -28,6 +31,7 @@ pub async fn get_all_ordered_items(filter: web::Query<Filter>) -> impl actix_web
         .await?;
 
     let values = serde_json::to_value(remain_orders)?;
+    tracing::info!("{values:?}");
 
     Result::<_, AppError>::Ok(actix_web::HttpResponse::Ok().json(values))
 }
@@ -35,11 +39,12 @@ pub async fn get_all_ordered_items(filter: web::Query<Filter>) -> impl actix_web
 pub async fn get_specified_ordered_items(
     name: web::Path<String>,
     filter: actix_web::web::Query<Filter>,
+    pool: web::Data<PgPool>,
 ) -> impl actix_web::Responder {
     // Validation: table
     let table = controllers_utils::validate_table(filter.table)?;
+    let pool: &PgPool = &pool;
     // Logic
-    let pool = crate::boot::database::db();
     let select_sql = format!(
         r#"
             SELECT *

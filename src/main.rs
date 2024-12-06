@@ -9,7 +9,6 @@ fn main() -> Result<(), crate::errors::AppError> {
         .build()
         .unwrap()
         .block_on(async {
-            let _ = boot::database::init().await;
             let config =
                 config::configuration::get_configuration().expect("Failed to load configuration");
             tracing::debug!("{config:?}");
