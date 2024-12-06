@@ -1,12 +1,12 @@
 use secrecy::Secret;
+use simplerestaurant::boot::database;
+use simplerestaurant::boot::telemetry::get_subscriber;
+use simplerestaurant::boot::telemetry::init_subscriber;
+use simplerestaurant::config::configuration::get_configuration;
+use simplerestaurant::config::configuration::DatabaseSettings;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::sync::LazyLock;
 use uuid::Uuid;
-use simplerestaurant::boot::database;
-use simplerestaurant::boot::telemetry::init_subscriber;
-use simplerestaurant::boot::telemetry::get_subscriber;
-use simplerestaurant::config::configuration::get_configuration;
-use simplerestaurant::config::configuration::DatabaseSettings;
 
 // Ensure that the `tracing` stack is only initialised once using `once_cell`
 static TRACING: LazyLock<()> = LazyLock::new(|| {
@@ -193,7 +193,9 @@ pub async fn spawn_app() -> TestApp {
     configure_database(&configuration.database).await;
 
     // Launch the application as a background task
-    let (server, application_port) = simplerestaurant::boot::app::launch(configuration).await.expect("Failed to launch");
+    let (server, application_port) = simplerestaurant::boot::app::launch(configuration)
+        .await
+        .expect("Failed to launch");
     let _ = tokio::spawn(server);
 
     let client = reqwest::Client::builder()
@@ -208,7 +210,6 @@ pub async fn spawn_app() -> TestApp {
         db_pool: database::load().await.expect("Database failed to load"),
         api_client: client,
     };
-
 
     test_app
 }
@@ -244,4 +245,3 @@ pub fn assert_is_redirect_to(response: &reqwest::Response, location: &str) {
     assert_eq!(response.status().as_u16(), 303);
     assert_eq!(response.headers().get("Location").unwrap(), location);
 }
-

@@ -1,6 +1,7 @@
 use crate::config::settings;
 use crate::controllers;
 use actix_web::cookie::SameSite;
+use actix_web::dev::Server;
 use actix_web::dev::ServiceFactory;
 use actix_web::dev::ServiceRequest;
 use actix_web::dev::ServiceResponse;
@@ -8,8 +9,6 @@ use actix_web::web::{self, delete, get, head, patch, post, put, trace, ServiceCo
 use actix_web::App;
 use actix_web::HttpServer;
 use std::net::TcpListener;
-use actix_web::dev::Server;
-
 
 pub async fn launch(
     configuration: crate::config::configuration::Settings,
