@@ -1,13 +1,6 @@
-#![allow(unused)]
-mod boot;
-mod config;
-mod controllers;
-mod errors;
-mod idempotency;
-mod models;
-mod utils;
-
-use crate::config::settings;
+use simplerestaurant::boot;
+use simplerestaurant::config;
+use simplerestaurant::errors;
 
 fn main() -> Result<(), crate::errors::AppError> {
     boot::telemetry::load();
@@ -16,14 +9,15 @@ fn main() -> Result<(), crate::errors::AppError> {
         .build()
         .unwrap()
         .block_on(async {
-            {
-                let _config = config::configuration::get_configuration()
-                    .expect("Failed to load configuration");
-                tracing::debug!("{_config:?}");
-                let _ = boot::database::init().await;
-            }
+            let _ = boot::database::init().await;
+            let config =
+                config::configuration::get_configuration().expect("Failed to load configuration");
+            tracing::debug!("{config:?}");
             // Launching web server
-            boot::app::launch().await
+            let (server, _port) = boot::app::launch(config).await?;
+            server.await?;
+
+            Result::<(), crate::errors::AppError>::Ok(())
         })?;
 
     Ok(())

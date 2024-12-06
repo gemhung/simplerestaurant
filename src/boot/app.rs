@@ -7,14 +7,21 @@ use actix_web::dev::ServiceResponse;
 use actix_web::web::{self, delete, get, head, patch, post, put, trace, ServiceConfig};
 use actix_web::App;
 use actix_web::HttpServer;
+use std::net::TcpListener;
+use actix_web::dev::Server;
 
-pub async fn launch() -> Result<(), actix_web::Error> {
-    HttpServer::new(app)
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await?;
 
-    Ok(())
+pub async fn launch(
+    configuration: crate::config::configuration::Settings,
+) -> Result<(Server, u16), crate::errors::AppError> {
+    let address = format!(
+        "{}:{}",
+        configuration.application.host, configuration.application.port
+    );
+    let listener = TcpListener::bind(address)?;
+    let port = listener.local_addr().unwrap().port();
+
+    Ok((HttpServer::new(app).listen(listener)?.run(), port))
 }
 
 fn app() -> App<

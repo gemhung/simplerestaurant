@@ -27,3 +27,4 @@ pub async fn load() -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
         .connect_with(connect_opts)
         .await
 }
+

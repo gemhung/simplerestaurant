@@ -16,7 +16,7 @@ pub fn load() {
 ///
 /// We are using `impl Subscriber` as return type to avoid having to spell out the actual
 /// type of the returned subscriber, which is indeed quite complex.
-fn get_subscriber<Sink>(
+pub fn get_subscriber<Sink>(
     name: String,
     env_filter: String,
     sink: Sink,
@@ -36,7 +36,7 @@ where
 /// Register a subscriber as global default to process span data.
 ///
 /// It should only be called once!
-fn init_subscriber(subscriber: impl Subscriber + Sync + Send) {
+pub fn init_subscriber(subscriber: impl Subscriber + Sync + Send) {
     LogTracer::init().expect("Failed to set logger");
     set_global_default(subscriber).expect("Failed to set subscriber");
 }
