@@ -1,13 +1,13 @@
 #![allow(unused)]
-mod config;
 mod boot;
-mod errors;
+mod config;
 mod controllers;
+mod errors;
 mod idempotency;
 mod models;
 mod utils;
 
-use config::settings;
+use crate::config::settings;
 
 fn main() -> Result<(), crate::errors::AppError> {
     boot::telemetry::load();
@@ -17,10 +17,10 @@ fn main() -> Result<(), crate::errors::AppError> {
         .unwrap()
         .block_on(async {
             {
-                let _ = config::settings::init_settings();
-                //let _ = aws::init_aws().await;
+                let _config = config::configuration::get_configuration()
+                    .expect("Failed to load configuration");
+                tracing::debug!("{_config:?}");
                 let _ = boot::database::init().await;
-                //let _ = boot::redis::init().unwrap();
             }
             // Launching web server
             boot::app::launch().await
@@ -28,5 +28,3 @@ fn main() -> Result<(), crate::errors::AppError> {
 
     Ok(())
 }
-
-
