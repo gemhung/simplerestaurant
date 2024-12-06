@@ -35,6 +35,7 @@ fn app() -> App<
 }
 
 fn routes(cfg: &mut ServiceConfig) {
+    // Requirements
     cfg.route("/items", get().to(controllers::get_all_ordered_items));
     cfg.route(
         "/items/{item_name}",
@@ -42,4 +43,7 @@ fn routes(cfg: &mut ServiceConfig) {
     );
     cfg.route("/items", post().to(controllers::create_orders));
     cfg.route("/items", delete().to(controllers::delete_orders));
+
+    // Health check
+    cfg.route("/health_check", get().to(controllers::health_check));
 }
