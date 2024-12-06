@@ -78,7 +78,6 @@ pub async fn spawn_app() -> TestApp {
 
     let test_app = TestApp {
         address: format!("http://localhost:{}", application_port),
-        port: application_port,
         //db_pool: database::load().await.expect("Database failed to load"),
         api_client: client,
     };
