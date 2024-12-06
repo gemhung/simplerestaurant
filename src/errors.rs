@@ -6,6 +6,9 @@ use actix_web::http::StatusCode;
 #[derive(thiserror::Error, Debug, strum::AsRefStr)]
 pub enum InnerAppError {
     #[error("{self:?}")]
+    NoSuchItem(String),
+
+    #[error("{self:?}")]
     MissingFilter(String),
 
     #[error("{self:?}")]
@@ -185,6 +188,14 @@ impl AppError {
     pub fn invalid_filter(err: impl Into<String>) -> Self {
         AppError {
             message: InnerAppError::InvalidFilter(err.into()),
+            location: std::panic::Location::caller(),
+        }
+    }
+
+    #[track_caller]
+    pub fn no_such_item(err: impl Into<String>) -> Self {
+        AppError {
+            message: InnerAppError::NoSuchItem(err.into()),
             location: std::panic::Location::caller(),
         }
     }

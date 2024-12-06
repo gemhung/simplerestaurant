@@ -1,6 +1,7 @@
 [package]
 name = "simplerestaurant"
 version = "0.1.0"
+authors = ["gemhung <gembright.stone.hung@gmail.com>"]
 edition = "2021"
 
 [dependencies]

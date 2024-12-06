@@ -46,6 +46,28 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
+
+    pub async fn get_specified_items(&self, table: i32, name: &str) -> reqwest::Response {
+        self.api_client
+            .get(&format!("{}/items/{}", &self.address, name))
+            .query(&[("table", table.to_string())])
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
+
+
+    pub async fn delete_orders<Body>(&self, body: &Body) -> reqwest::Response
+    where
+        Body: serde::Serialize,
+    {
+        self.api_client
+            .delete(&format!("{}/items", &self.address))
+            .json(body)
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
 }
 
 pub async fn spawn_app() -> TestApp {

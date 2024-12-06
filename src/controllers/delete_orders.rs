@@ -1,4 +1,5 @@
 use crate::controllers::utils as controllers_utils;
+use crate::errors::AppError;
 use crate::idempotency::{save_response, try_processing, IdempotencyKey, NextAction};
 use crate::utils::e400;
 use crate::utils::e500;
@@ -40,7 +41,13 @@ pub async fn delete_orders(
             return Result::<_, crate::errors::AppError>::Ok(saved_response);
         }
     };
-    delete_ordered_item(&mut transaction, table, item_id).await?;
+    let row_affected = delete_ordered_item(&mut transaction, table, item_id).await?;
+    if row_affected == 0 {
+        return Err(crate::errors::AppError::no_such_item(format!(
+            "No such item id({})",
+            item_id
+        )));
+    }
     let response = actix_web::HttpResponse::Ok().json("deleted");
     let response = save_response(transaction, table, &idempotency_key, response)
         .await
@@ -53,7 +60,7 @@ async fn delete_ordered_item(
     transaction: &mut Transaction<'_, Postgres>,
     table: i32,
     item_id: i64,
-) -> Result<(), sqlx::Error> {
+) -> Result<u64, sqlx::Error> {
     let delete_sql = format!(
         "
             DELETE FROM table{}.ordered_items 
@@ -62,7 +69,7 @@ async fn delete_ordered_item(
         table
     );
     let query = sqlx::query(&delete_sql).bind(item_id);
-    transaction.execute(query).await?;
+    let rows_affected = transaction.execute(query).await?.rows_affected();
 
-    Ok(())
+    Ok(rows_affected)
 }
