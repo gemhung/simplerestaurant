@@ -1,3 +1,4 @@
+use crate::controllers::utils as controllers_utils;
 use crate::idempotency::{save_response, try_processing, IdempotencyKey, NextAction};
 use crate::utils::e400;
 use crate::utils::e500;
@@ -23,9 +24,12 @@ pub async fn delete_orders(
         idempotency_key,
     }): web::Json<DeleteOrder>,
 ) -> impl actix_web::Responder {
-    let pool = crate::boot::database::db();
+    // Validation: table
+    let table = controllers_utils::validate_table(table)?;
     let idempotency_key: IdempotencyKey = idempotency_key.try_into().map_err(e400)?;
     tracing::debug!("{item_id}, {table}, {idempotency_key:?}");
+    // Logic
+    let pool = crate::boot::database::db();
     let mut transaction = match try_processing(&pool, table, &idempotency_key)
         .await
         .map_err(e500)?

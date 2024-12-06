@@ -8,6 +8,7 @@ use rand::Rng;
 use sqlx::{Executor, Postgres, Transaction};
 use std::fmt::Write;
 use uuid::Uuid;
+use crate::controllers::utils as controllers_utils;
 
 #[derive(serde::Deserialize)]
 pub struct CreateOrder {
@@ -23,9 +24,12 @@ pub async fn create_orders(
         table,
     }): web::Json<CreateOrder>,
 ) -> Result<HttpResponse, crate::errors::AppError> {
-    let pool = crate::boot::database::db();
+    // Validation
+    let table = controllers_utils::validate_table(table)?;
     let idempotency_key: IdempotencyKey = idempotency_key.try_into().map_err(e400)?;
     tracing::debug!("{item_name}, {table}, {idempotency_key:?}");
+    // Logic
+    let pool = crate::boot::database::db();
     let mut transaction = match try_processing(&pool, table, &idempotency_key)
         .await
         .map_err(e500)?
@@ -41,6 +45,7 @@ pub async fn create_orders(
     let response = save_response(transaction, table, &idempotency_key, response)
         .await
         .map_err(e500)?;
+
     Ok(response)
 }
 
@@ -61,7 +66,6 @@ async fn insert_ordered_item(
                 created_at
             )
             VALUES ($1,$2,$3,$4)
-
         ",
         table
     );

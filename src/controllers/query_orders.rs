@@ -2,6 +2,7 @@ use crate::errors::AppError;
 use crate::models::OrderedItemsModel;
 use actix_web::web;
 use sqlx::{Executor, PgPool};
+use crate::controllers::utils as controllers_utils;
 
 #[derive(serde::Deserialize)]
 pub struct Filter {
@@ -10,7 +11,9 @@ pub struct Filter {
 }
 
 pub async fn get_all_ordered_items(filter: web::Query<Filter>) -> impl actix_web::Responder {
-    let table = validate_table(filter.table)?;
+    // Validation: table
+    let table = controllers_utils::validate_table(filter.table)?;
+    // Logic
     let pool = crate::boot::database::db();
     let select_sql = format!(
         r#"
@@ -34,7 +37,8 @@ pub async fn get_specified_ordered_items(
     filter: actix_web::web::Query<Filter>,
 ) -> impl actix_web::Responder {
     // Validation: table
-    let table = validate_table(filter.table)?;
+    let table = controllers_utils::validate_table(filter.table)?;
+    // Logic
     let pool = crate::boot::database::db();
     let select_sql = format!(
         r#"
@@ -53,18 +57,3 @@ pub async fn get_specified_ordered_items(
     Result::<_, AppError>::Ok(actix_web::HttpResponse::Ok().json(values))
 }
 
-fn validate_table(table: Option<i32>) -> Result<i32, AppError> {
-    let table = match table {
-        Some(table @ 1..=100) => table,
-        Some(_) => {
-            return Err(AppError::invalid_filter(
-                "Expecting table to be in a range from 1 to 100",
-            ));
-        }
-        None => {
-            return Err(AppError::missing_filter("Missing table filter"));
-        }
-    };
-
-    Ok(table)
-}
