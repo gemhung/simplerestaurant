@@ -1,5 +1,4 @@
 use secrecy::Secret;
-use simplerestaurant::boot::database;
 use simplerestaurant::boot::telemetry::get_subscriber;
 use simplerestaurant::boot::telemetry::init_subscriber;
 use simplerestaurant::config::configuration::get_configuration;
@@ -23,122 +22,10 @@ static TRACING: LazyLock<()> = LazyLock::new(|| {
 
 pub struct TestApp {
     pub address: String,
-    pub port: u16,
-    //pub db_pool: PgPool,
-    //pub email_server: MockServer,
-    //pub test_user: TestUser,
     pub api_client: reqwest::Client,
-    //pub email_client: EmailClient,
-}
-
-/// Confirmation links embedded in the request to the email API.
-pub struct ConfirmationLinks {
-    pub html: reqwest::Url,
-    pub plain_text: reqwest::Url,
 }
 
 impl TestApp {
-    //pub async fn dispatch_all_pending_emails(&self) {
-    //    loop {
-    //        if let ExecutionOutcome::EmptyQueue =
-    //            try_execute_task(&self.db_pool, &self.email_client)
-    //                .await
-    //                .unwrap()
-    //        {
-    //            break;
-    //        }
-    //    }
-    //}
-
-    //pub async fn post_subscriptions(&self, body: String) -> reqwest::Response {
-    //    self.api_client
-    //        .post(&format!("{}/subscriptions", &self.address))
-    //        .header("Content-Type", "application/x-www-form-urlencoded")
-    //        .body(body)
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn post_login<Body>(&self, body: &Body) -> reqwest::Response
-    //where
-    //    Body: serde::Serialize,
-    //{
-    //    self.api_client
-    //        .post(&format!("{}/login", &self.address))
-    //        .form(body)
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn get_login_html(&self) -> String {
-    //    self.api_client
-    //        .get(&format!("{}/login", &self.address))
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //        .text()
-    //        .await
-    //        .unwrap()
-    //}
-
-    //pub async fn get_admin_dashboard(&self) -> reqwest::Response {
-    //    self.api_client
-    //        .get(&format!("{}/admin/dashboard", &self.address))
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn get_admin_dashboard_html(&self) -> String {
-    //    self.get_admin_dashboard().await.text().await.unwrap()
-    //}
-
-    //pub async fn get_change_password(&self) -> reqwest::Response {
-    //    self.api_client
-    //        .get(&format!("{}/admin/password", &self.address))
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn get_change_password_html(&self) -> String {
-    //    self.get_change_password().await.text().await.unwrap()
-    //}
-
-    //pub async fn post_logout(&self) -> reqwest::Response {
-    //    self.api_client
-    //        .post(&format!("{}/admin/logout", &self.address))
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn post_change_password<Body>(&self, body: &Body) -> reqwest::Response
-    //where
-    //    Body: serde::Serialize,
-    //{
-    //    self.api_client
-    //        .post(&format!("{}/admin/password", &self.address))
-    //        .form(body)
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn get_publish_newsletter(&self) -> reqwest::Response {
-    //    self.api_client
-    //        .get(&format!("{}/admin/newsletters", &self.address))
-    //        .send()
-    //        .await
-    //        .expect("Failed to execute request.")
-    //}
-
-    //pub async fn get_publish_newsletter_html(&self) -> String {
-    //    self.get_publish_newsletter().await.text().await.unwrap()
-    //}
-
     pub async fn post_create_orders<Body>(&self, body: &Body) -> reqwest::Response
     where
         Body: serde::Serialize,
@@ -159,30 +46,6 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
-
-    ///// Extract the confirmation links embedded in the request to the email API.
-    //pub fn get_confirmation_links(&self, email_request: &wiremock::Request) -> ConfirmationLinks {
-    //    let body: serde_json::Value = serde_json::from_slice(&email_request.body).unwrap();
-
-    //    // Extract the link from one of the request fields.
-    //    let get_link = |s: &str| {
-    //        let links: Vec<_> = linkify::LinkFinder::new()
-    //            .links(s)
-    //            .filter(|l| *l.kind() == linkify::LinkKind::Url)
-    //            .collect();
-    //        assert_eq!(links.len(), 1);
-    //        let raw_link = links[0].as_str().to_owned();
-    //        let mut confirmation_link = reqwest::Url::parse(&raw_link).unwrap();
-    //        // Let's make sure we don't call random APIs on the web
-    //        assert_eq!(confirmation_link.host_str().unwrap(), "127.0.0.1");
-    //        confirmation_link.set_port(Some(self.port)).unwrap();
-    //        confirmation_link
-    //    };
-
-    //    let html = get_link(body["HtmlBody"].as_str().unwrap());
-    //    let plain_text = get_link(body["TextBody"].as_str().unwrap());
-    //    ConfirmationLinks { html, plain_text }
-    //}
 }
 
 pub async fn spawn_app() -> TestApp {
@@ -248,9 +111,4 @@ async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .await
         .expect("Failed to migrate the database");
     connection_pool
-}
-
-pub fn assert_is_redirect_to(response: &reqwest::Response, location: &str) {
-    assert_eq!(response.status().as_u16(), 303);
-    assert_eq!(response.headers().get("Location").unwrap(), location);
 }
