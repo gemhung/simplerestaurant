@@ -1,8 +1,8 @@
+use crate::controllers::utils as controllers_utils;
 use crate::errors::AppError;
 use crate::models::OrderedItemsModel;
 use actix_web::web;
 use sqlx::{Executor, PgPool};
-use crate::controllers::utils as controllers_utils;
 
 #[derive(serde::Deserialize)]
 pub struct Filter {
@@ -56,4 +56,3 @@ pub async fn get_specified_ordered_items(
 
     Result::<_, AppError>::Ok(actix_web::HttpResponse::Ok().json(values))
 }
-

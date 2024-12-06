@@ -40,4 +40,3 @@ fn init_subscriber(subscriber: impl Subscriber + Sync + Send) {
     LogTracer::init().expect("Failed to set logger");
     set_global_default(subscriber).expect("Failed to set subscriber");
 }
-

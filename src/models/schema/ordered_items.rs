@@ -1,9 +1,4 @@
-#[derive(
-    Default,
-    Debug,
-    sqlx::FromRow,
-    serde::Serialize,
-)]
+#[derive(Default, Debug, sqlx::FromRow, serde::Serialize)]
 pub struct Model {
     pub id: i64,
     pub status: String,

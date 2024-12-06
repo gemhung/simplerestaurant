@@ -108,7 +108,5 @@ impl TryFrom<String> for Environment {
 
 pub fn settings() -> &'static Settings {
     static SETTINGS: OnceLock<Settings> = OnceLock::new();
-    SETTINGS.get_or_init( || {
-        get_configuration().expect("Configraution load failed")
-    })
+    SETTINGS.get_or_init(|| get_configuration().expect("Configraution load failed"))
 }

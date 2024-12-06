@@ -26,8 +26,6 @@ fn app() -> App<
         InitError = (),
     >,
 > {
-    
-
     App::new()
         // Middlewares
         .wrap(actix_web::middleware::NormalizePath::trim())

@@ -1,3 +1,4 @@
+use crate::controllers::utils as controllers_utils;
 use crate::idempotency::{save_response, try_processing, IdempotencyKey, NextAction};
 use crate::utils::e400;
 use crate::utils::e500;
@@ -8,7 +9,6 @@ use rand::Rng;
 use sqlx::{Executor, Postgres, Transaction};
 use std::fmt::Write;
 use uuid::Uuid;
-use crate::controllers::utils as controllers_utils;
 
 #[derive(serde::Deserialize)]
 pub struct CreateOrder {

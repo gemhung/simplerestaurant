@@ -13,4 +13,3 @@ pub struct Model {
     pub response_body: Vec<u8>,
     pub created_at: chrono::NaiveDateTime,
 }
-

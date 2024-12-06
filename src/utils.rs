@@ -23,4 +23,3 @@ pub fn see_other(location: &str) -> HttpResponse {
         .insert_header((LOCATION, location))
         .finish()
 }
-
