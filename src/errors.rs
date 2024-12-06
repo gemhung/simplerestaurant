@@ -1,6 +1,6 @@
 #![allow(clippy::result_large_err)]
-use actix_web::http::StatusCode;
 use crate::config::settings;
+use actix_web::http::StatusCode;
 
 #[allow(unused)]
 #[derive(thiserror::Error, Debug, strum::AsRefStr)]
@@ -201,11 +201,10 @@ impl AppError {
         tracing::error!("{self}");
         use actix_web::ResponseError;
         let mut builder = actix_web::HttpResponseBuilder::new(self.status_code());
-        match self {
-            AppError { message, .. } => builder
-                .status(actix_web::http::StatusCode::BAD_REQUEST)
-                .body(format!("{:?}", message)),
-        }
+        let AppError { message, .. } = self;
+        builder
+            .status(actix_web::http::StatusCode::BAD_REQUEST)
+            .body(format!("{:?}", message))
     }
 }
 

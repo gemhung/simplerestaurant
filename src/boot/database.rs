@@ -8,7 +8,6 @@ pub fn db() -> &'static sqlx::Pool<sqlx::Postgres> {
     DB.get().expect("DB failed to load")
 }
 
-#[must_use]
 pub async fn init() -> Result<(), sqlx::Error> {
     let pool = load().await?;
     DB.set(pool).unwrap();
@@ -16,7 +15,6 @@ pub async fn init() -> Result<(), sqlx::Error> {
     Ok(())
 }
 
-#[must_use]
 pub async fn load() -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
     let settings = crate::config::configuration::settings();
     let connect_opts = settings.database.connect_options();

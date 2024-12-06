@@ -9,7 +9,7 @@ use actix_web::App;
 use actix_web::HttpServer;
 
 pub async fn launch() -> Result<(), actix_web::Error> {
-    HttpServer::new(move || app())
+    HttpServer::new(app)
         .bind(("127.0.0.1", 8080))?
         .run()
         .await?;
@@ -26,14 +26,14 @@ fn app() -> App<
         InitError = (),
     >,
 > {
-    let app = App::new()
+    
+
+    App::new()
         // Middlewares
         .wrap(actix_web::middleware::NormalizePath::trim())
         // Routes
         .configure(routes)
-        .default_service(web::to(|| actix_web::HttpResponse::NotFound()));
-
-    app
+        .default_service(web::to(actix_web::HttpResponse::NotFound))
 }
 
 fn routes(cfg: &mut ServiceConfig) {

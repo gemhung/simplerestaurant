@@ -30,7 +30,7 @@ pub async fn delete_orders(
     tracing::debug!("{item_id}, {table}, {idempotency_key:?}");
     // Logic
     let pool = crate::boot::database::db();
-    let mut transaction = match try_processing(&pool, table, &idempotency_key)
+    let mut transaction = match try_processing(pool, table, &idempotency_key)
         .await
         .map_err(e500)?
     {
@@ -39,7 +39,7 @@ pub async fn delete_orders(
             return Result::<_, crate::errors::AppError>::Ok(saved_response);
         }
     };
-    let _ = delete_ordered_item(&mut transaction, table, item_id).await?;
+    delete_ordered_item(&mut transaction, table, item_id).await?;
     let response = actix_web::HttpResponse::Ok().json("deleted");
     let response = save_response(transaction, table, &idempotency_key, response)
         .await

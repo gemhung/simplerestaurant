@@ -30,7 +30,7 @@ pub async fn create_orders(
     tracing::debug!("{item_name}, {table}, {idempotency_key:?}");
     // Logic
     let pool = crate::boot::database::db();
-    let mut transaction = match try_processing(&pool, table, &idempotency_key)
+    let mut transaction = match try_processing(pool, table, &idempotency_key)
         .await
         .map_err(e500)?
     {
@@ -40,7 +40,7 @@ pub async fn create_orders(
         }
     };
     let cooking_time = rand::thread_rng().gen_range(300..900); // 5 min - 15 mins
-    let _ = insert_ordered_item(&mut transaction, table, "added", &item_name, cooking_time).await?;
+    insert_ordered_item(&mut transaction, table, "added", &item_name, cooking_time).await?;
     let response = actix_web::HttpResponse::Ok().json("added");
     let response = save_response(transaction, table, &idempotency_key, response)
         .await
