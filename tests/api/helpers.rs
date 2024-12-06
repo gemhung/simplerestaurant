@@ -56,7 +56,6 @@ impl TestApp {
             .expect("Failed to execute request.")
     }
 
-
     pub async fn delete_orders<Body>(&self, body: &Body) -> reqwest::Response
     where
         Body: serde::Serialize,
