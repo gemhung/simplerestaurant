@@ -31,7 +31,7 @@ pub async fn get_all_ordered_items(
         .await?;
 
     let values = serde_json::to_value(remain_orders)?;
-    tracing::info!("{values:?}");
+    tracing::debug!("{values:?}");
 
     Result::<_, AppError>::Ok(actix_web::HttpResponse::Ok().json(values))
 }

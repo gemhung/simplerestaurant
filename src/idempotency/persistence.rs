@@ -117,7 +117,7 @@ pub async fn try_processing(
     if n_inserted_rows > 0 {
         Ok(NextAction::StartProcessing(transaction))
     } else {
-        tracing::info!("already added");
+        drop(transaction);
         let saved_response = get_saved_response(pool, table, idempotency_key)
             .await?
             .ok_or_else(|| anyhow::anyhow!("We expected a saved response, we didn't find it"))?;

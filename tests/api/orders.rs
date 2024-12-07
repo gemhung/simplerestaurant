@@ -175,14 +175,15 @@ async fn order_creation_is_idempotent() {
     assert!(response.len() == 1);
 }
 
-#[tokio::test]
+#[tokio::test(flavor = "multi_thread")]
 async fn concurrent_create_orders() {
     // Arrange
     let app = spawn_app().await;
-
-    // Act - Submit two newsletter forms concurrently
     let table = rand::thread_rng().gen_range(1..=100);
-    // Act - Part 1 - create an order
+    // 1. Create 100 orders but with same idempotency and we expected that only one item is added
+    use tokio::task::JoinSet;
+    let mut set = JoinSet::new();
+    let app = std::sync::Arc::new(app);
     let request_body = serde_json::json!({
         "item_name": "rice",
         "table": table,
@@ -190,15 +191,20 @@ async fn concurrent_create_orders() {
         // form data, not as an header
         "idempotency_key": uuid::Uuid::new_v4().to_string()
     });
-    let response1 = app.post_create_orders(&request_body);
-    let response2 = app.post_create_orders(&request_body);
-    let (response1, response2) = tokio::join!(response1, response2);
-
-    assert_eq!(response1.status(), response2.status());
-    assert_eq!(
-        response1.text().await.unwrap(),
-        response2.text().await.unwrap()
-    );
+    let app = std::sync::Arc::new(app);
+    for _i in 0..100 {
+        let app = app.clone();
+        let request_body = request_body.clone();
+        set.spawn(async move { app.post_create_orders(&request_body).await });
+    }
+    let responses = set.join_all().await;
+    for res in responses {
+        let json: serde_json::Value = res.json().await.unwrap();
+        assert_eq!(json.as_str().unwrap(), "added");
+    }
+    // 2. Validation: should only have one item
+    let ret: Vec<serde_json::Value> = app.get_all_items(table).await.json().await.unwrap();
+    assert!(ret.len() == 1);
 }
 
 fn create_order_body(table: i32, name: &str) -> serde_json::Value {
