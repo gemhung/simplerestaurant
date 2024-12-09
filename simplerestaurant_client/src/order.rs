@@ -15,7 +15,6 @@ pub async fn send_create_orders(addr: &str, orders: Vec<(&str, &str)>) -> serde_
         // Concurrently executing tasks
         let addr = addr.to_string();
         let handle = tokio::task::spawn(async move {
-            
             client
                 .post(format!("{}/items", addr))
                 .json(&body)
@@ -44,7 +43,6 @@ pub async fn send_create_orders(addr: &str, orders: Vec<(&str, &str)>) -> serde_
             }
         }
     }
-    
 
     serde_json::to_value(ret).expect("Failed to convert to json")
 }

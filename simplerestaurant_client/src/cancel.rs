@@ -27,7 +27,6 @@ pub async fn cancel_order(addr: &str, table: i32, item_id: i64) -> serde_json::V
             ret.push(format!("error: {}", body));
         }
     }
-    
 
     serde_json::to_value(ret).expect("Failed to convert to json")
 }
