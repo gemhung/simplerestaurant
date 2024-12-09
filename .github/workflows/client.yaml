@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+    paths: 
+      - 'simplerestaurant_client/**'
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - main
+    paths: 
+      - 'simplerestaurant_client/**'
 
 env:
   CARGO_TERM_COLOR: always
