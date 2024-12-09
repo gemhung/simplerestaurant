@@ -215,7 +215,7 @@ impl AppError {
         let AppError { message, .. } = self;
         builder
             .status(actix_web::http::StatusCode::BAD_REQUEST)
-            .body(format!("{:?}", message))
+            .json(format!("{:?}", message))
     }
 }
 

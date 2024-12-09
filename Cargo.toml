@@ -4,6 +4,12 @@ version = "0.1.0"
 authors = ["gemhung <gembright.stone.hung@gmail.com>"]
 edition = "2021"
 
+[workspace]
+
+members = [
+    "simplerestaurant_client",
+]
+
 [dependencies]
 rand = "0.8"
 serde = { version = "1", features = ["derive"] }
