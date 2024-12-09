@@ -1,4 +1,3 @@
-#![allow(unused)]
 pub mod boot;
 pub mod config;
 pub mod controllers;
