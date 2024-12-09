@@ -15,13 +15,13 @@ pub async fn send_create_orders(addr: &str, orders: Vec<(&str, &str)>) -> serde_
         // Concurrently executing tasks
         let addr = addr.to_string();
         let handle = tokio::task::spawn(async move {
-            let response = client
-                .post(&format!("{}/items", addr))
+            
+            client
+                .post(format!("{}/items", addr))
                 .json(&body)
                 .send()
                 .await
-                .expect("Failed to execute request.");
-            response
+                .expect("Failed to execute request.")
         });
         handles.push(handle);
     }
@@ -40,11 +40,11 @@ pub async fn send_create_orders(addr: &str, orders: Vec<(&str, &str)>) -> serde_
             _ => {
                 let body: serde_json::Value =
                     response.json().await.expect("Failed to get body as json");
-                ret.push(format!("error: {}", body.to_string()));
+                ret.push(format!("error: {}", body));
             }
         }
     }
-    let json = serde_json::to_value(ret).expect("Failed to convert to json");
+    
 
-    json
+    serde_json::to_value(ret).expect("Failed to convert to json")
 }

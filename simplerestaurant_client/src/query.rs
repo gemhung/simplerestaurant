@@ -13,7 +13,7 @@ pub async fn query_table(addr: &str, table: i32) -> serde_json::Value {
 
 pub async fn query_table_with_name(addr: &str, table: i32, name: String) -> serde_json::Value {
     let response = utils::client()
-        .get(&format!("{}/items/{}", addr, name))
+        .get(format!("{}/items/{}", addr, name))
         .query(&[("table", table.to_string())])
         .send()
         .await

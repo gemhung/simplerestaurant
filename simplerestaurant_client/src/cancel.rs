@@ -9,7 +9,7 @@ pub async fn cancel_order(addr: &str, table: i32, item_id: i64) -> serde_json::V
         "idempotency_key": uuid::Uuid::new_v4().to_string()
     });
     let response = utils::client()
-        .delete(&format!("{}/items", addr))
+        .delete(format!("{}/items", addr))
         .json(&body)
         .send()
         .await
@@ -27,7 +27,7 @@ pub async fn cancel_order(addr: &str, table: i32, item_id: i64) -> serde_json::V
             ret.push(format!("error: {}", body));
         }
     }
-    let json = serde_json::to_value(ret).expect("Failed to convert to json");
+    
 
-    json
+    serde_json::to_value(ret).expect("Failed to convert to json")
 }
