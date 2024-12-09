@@ -26,101 +26,20 @@ pub enum InnerAppError {
     #[error("{self:?}")]
     NoSuchSlug(String),
 
-    #[error("{self:?}")]
-    NoSuchPrimaryKey(String),
-
     #[error("Property(id: {0:?}) is required bu no value is offered")]
     MissingItemValue(i32),
 
     #[error("{self:?}")]
     EmptyItemValue(String),
 
-    #[error("{self:?}")]
-    ParseIntError(#[from] std::num::ParseIntError),
-
-    #[error("{self:?}")]
-    TextValidationError(String),
-
-    #[error("{self:?}")]
-    PhoneValidationError(String),
-
     #[error(transparent)]
     Other(#[from] anyhow::Error),
-
-    #[error("{self:?}")]
-    MissingAttribute(String),
-
-    #[error("{self:?}")]
-    InvalidAttributes(String),
-
-    #[error("{self:?}")]
-    Validation(String),
-
-    #[error("{self:?}")]
-    ParseFlotError(#[from] std::num::ParseFloatError),
 
     #[error("{self:?}")]
     SqlxError(#[from] sqlx::Error),
 
     #[error("{self:?}")]
-    InvalidDomain(String),
-
-    #[error("{self:?}")]
-    MissingSubdomain(String),
-
-    #[error("{self:?}")]
-    WebSiteNotFound(String),
-
-    //#[error(transparent)]
-    //UuidError(#[from] uuid::Error),
-    #[error(transparent)]
-    SpawnJointError(#[from] actix_web::rt::task::JoinError),
-
-    #[error("{self:?}")]
-    NotAllowAnonymous(String),
-
-    #[error("{self:?}")]
-    ChangePasswordError(String),
-
-    //#[error(transparent)]
-    //DeadpoolRedisPoolError(#[from] deadpool_redis::PoolError),
-
-    //#[error(transparent)]
-    //RedisError(#[from] deadpool_redis::redis::RedisError),
-    #[error("{self:?}")]
-    TokenNotExist,
-
-    //#[error(transparent)]
-    //SerdeQs(#[from] serde_qs::Error),
-    #[error(transparent)]
-    PathStripPrefixError(#[from] std::path::StripPrefixError),
-
-    #[error("{self:?}")]
-    UnknownUrlForService(String),
-
-    #[error("{self:?}")]
-    MetaDataParserErorr(String),
-
-    #[error("{self:?}")]
-    NoSuchView(i64),
-
-    #[error("{self:?}")]
     SerdeJsonError(#[from] serde_json::Error),
-
-    #[error("{self:?}")]
-    CantFindTimestamp(String),
-
-    #[error("{self:?}")]
-    InvalidStatusCode(String),
-
-    #[error("{self:?}")]
-    BadRequest(String),
-
-    #[error("{self:?}")]
-    NoSuchMethod(String),
-
-    #[error("{self:?}")]
-    NoSuchRoute(String),
 
     #[error("{self:?}")]
     InfalliableErorr,
@@ -133,23 +52,6 @@ pub enum InnerAppError {
 
     #[error("{self:?}")]
     Utf8Error(#[from] std::str::Utf8Error),
-
-    #[error("{self:?}")]
-    AnotherUserAlreadyLogin(String),
-
-    #[error("{self:?}")]
-    IntoSeaQueryValue(String),
-
-    //#[error("{self:?}")]
-    //DeriveMoreFromStr(#[from] derive_more::FromStrError),
-    #[error("{self:?}")]
-    Unescape(String),
-
-    #[error("{self:?}")]
-    EmptyContentType(String),
-
-    #[error("{self:?}")]
-    Downcast(String),
 }
 
 #[derive(Debug)]

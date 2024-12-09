@@ -20,10 +20,7 @@ pub async fn launch(
     let listener = TcpListener::bind(address)?;
     let port = listener.local_addr().unwrap().port();
 
-    //let db_pool = crate::boot::database::get_connection_pool2(&configuration.database).await;
-    //let db_pool = actix_web::web::Data::new(db_pool);
     Ok((
-        //HttpServer::new(move || app(&configuration, db_pool.clone()))
         HttpServer::new(move || app(&configuration))
             .listen(listener)?
             .run(),
