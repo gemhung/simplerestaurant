@@ -60,7 +60,7 @@ async fn main() -> Result<(), anyhow::Error> {
             std::io::stdout()
                 .lock()
                 .write_all(json.to_string().as_bytes())
-                .expect("Write failed");
+                .expect("Writing failed");
         }
         Commands::Query {
             table,
@@ -71,7 +71,7 @@ async fn main() -> Result<(), anyhow::Error> {
             std::io::stdout()
                 .lock()
                 .write_all(json.to_string().as_bytes())
-                .expect("Write failed");
+                .expect("Writing failed");
         }
         Commands::Query {
             table, name: None, ..
@@ -80,14 +80,14 @@ async fn main() -> Result<(), anyhow::Error> {
             std::io::stdout()
                 .lock()
                 .write_all(json.to_string().as_bytes())
-                .expect("Write failed");
+                .expect("Writing failed");
         }
         Commands::Cancel { table, item_id, .. } => {
             let json = cancel::cancel_order(&addr, table, item_id).await;
             std::io::stdout()
                 .lock()
                 .write_all(json.to_string().as_bytes())
-                .expect("Write failed");
+                .expect("Writing failed");
         }
     }
 
