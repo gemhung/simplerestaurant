@@ -97,8 +97,6 @@ pub async fn spawn_app() -> TestApp {
         .build()
         .unwrap();
 
-    
-
     TestApp {
         address: format!("http://localhost:{}", application_port),
         //db_pool: database::load().await.expect("Database failed to load"),
