@@ -13,7 +13,7 @@ pub async fn cancel_order(addr: &str, table: i32, item_id: i64) -> serde_json::V
         .json(&body)
         .send()
         .await
-        .expect("Failed to execute request.");
+        .expect("Failed to execute request");
     //let json: serde_json::Value = response.json().await.unwrap();
     let mut ret = vec![];
     match response.status() {
