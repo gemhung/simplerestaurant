@@ -67,7 +67,7 @@ async fn get_all_items() {
     let app = spawn_app().await;
     let table = rand::thread_rng().gen_range(1..=100);
     let response: Vec<serde_json::Value> = app.get_all_items(table).await.json().await.unwrap();
-    assert!(response.len() == 0);
+    assert!(response.is_empty());
 }
 
 #[tokio::test]
@@ -82,7 +82,7 @@ async fn get_specified_items() {
         .json()
         .await
         .unwrap();
-    assert!(response.len() == 0);
+    assert!(response.is_empty());
 
     // 2. Add an order where name is "rice"
     let request_body = create_order_body(table, "rice");

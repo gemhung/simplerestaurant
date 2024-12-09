@@ -2,14 +2,11 @@ use crate::controllers::utils as controllers_utils;
 use crate::idempotency::{save_response, try_processing, IdempotencyKey, NextAction};
 use crate::utils::e400;
 use crate::utils::e500;
-use actix_web::http::header::ContentType;
 use actix_web::web;
 use actix_web::HttpResponse;
 use rand::Rng;
 use sqlx::PgPool;
 use sqlx::{Executor, Postgres, Transaction};
-use std::fmt::Write;
-use uuid::Uuid;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct CreateOrder {

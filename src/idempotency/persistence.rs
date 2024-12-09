@@ -5,7 +5,6 @@ use actix_web::http::StatusCode;
 use actix_web::HttpResponse;
 use sqlx::{Executor, PgPool};
 use sqlx::{Postgres, Transaction};
-use uuid::Uuid;
 
 pub async fn get_saved_response(
     pool: &PgPool,

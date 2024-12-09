@@ -2,7 +2,7 @@ use crate::controllers::utils as controllers_utils;
 use crate::errors::AppError;
 use crate::models::OrderedItemsModel;
 use actix_web::web;
-use sqlx::{Executor, PgPool};
+use sqlx::PgPool;
 
 #[derive(serde::Deserialize)]
 pub struct Filter {

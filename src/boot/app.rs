@@ -1,11 +1,9 @@
-use crate::config::settings;
 use crate::controllers;
-use actix_web::cookie::SameSite;
 use actix_web::dev::Server;
 use actix_web::dev::ServiceFactory;
 use actix_web::dev::ServiceRequest;
 use actix_web::dev::ServiceResponse;
-use actix_web::web::{self, delete, get, head, patch, post, put, trace, ServiceConfig};
+use actix_web::web::{self, delete, get, post, ServiceConfig};
 use actix_web::App;
 use actix_web::HttpServer;
 use std::net::TcpListener;

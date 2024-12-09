@@ -1,8 +1,6 @@
 use crate::config::configuration::DatabaseSettings;
-use crate::config::settings;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
-use std::str::FromStr;
 
 pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
     //PgPoolOptions::new().connect_lazy_with(configuration.connect_options())

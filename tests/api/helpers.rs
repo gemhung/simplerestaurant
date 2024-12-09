@@ -31,7 +31,7 @@ impl TestApp {
         Body: serde::Serialize,
     {
         self.api_client
-            .post(&format!("{}/items", &self.address))
+            .post(format!("{}/items", &self.address))
             .json(body)
             .send()
             .await
@@ -40,7 +40,7 @@ impl TestApp {
 
     pub async fn get_all_items(&self, table: i32) -> reqwest::Response {
         self.api_client
-            .get(&format!("{}/items", &self.address))
+            .get(format!("{}/items", &self.address))
             .query(&[("table", table.to_string())])
             .send()
             .await
@@ -49,7 +49,7 @@ impl TestApp {
 
     pub async fn get_specified_items(&self, table: i32, name: &str) -> reqwest::Response {
         self.api_client
-            .get(&format!("{}/items/{}", &self.address, name))
+            .get(format!("{}/items/{}", &self.address, name))
             .query(&[("table", table.to_string())])
             .send()
             .await
@@ -61,7 +61,7 @@ impl TestApp {
         Body: serde::Serialize,
     {
         self.api_client
-            .delete(&format!("{}/items", &self.address))
+            .delete(format!("{}/items", &self.address))
             .json(body)
             .send()
             .await
@@ -97,13 +97,13 @@ pub async fn spawn_app() -> TestApp {
         .build()
         .unwrap();
 
-    let test_app = TestApp {
+    
+
+    TestApp {
         address: format!("http://localhost:{}", application_port),
         //db_pool: database::load().await.expect("Database failed to load"),
         api_client: client,
-    };
-
-    test_app
+    }
 }
 
 async fn configure_database(config: &DatabaseSettings) -> PgPool {

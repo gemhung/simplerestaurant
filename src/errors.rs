@@ -1,5 +1,4 @@
 #![allow(clippy::result_large_err)]
-use crate::config::settings;
 use actix_web::http::StatusCode;
 
 #[allow(unused)]
@@ -133,7 +132,7 @@ impl<E: Into<InnerAppError>> From<E> for AppError {
 }
 
 impl std::convert::From<std::convert::Infallible> for InnerAppError {
-    fn from(infall: std::convert::Infallible) -> Self {
+    fn from(_infall: std::convert::Infallible) -> Self {
         InnerAppError::InfalliableErorr
     }
 }
@@ -143,24 +142,6 @@ impl std::fmt::Display for AppError {
         write!(f, "{}, {}", self.message, self.location)
     }
 }
-
-#[derive(Debug)]
-struct Super<'a, T>(pub &'a T);
-
-impl<T: std::fmt::Display> std::fmt::Display for Super<'_, T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl From<AppError> for anyhow::Error {
-    fn from(err: AppError) -> Self {
-        anyhow::Error::msg(err.to_string())
-    }
-}
-
-// Default implementation for ResponseError
-impl<T: std::fmt::Debug + std::fmt::Display> actix_web::ResponseError for Super<'_, T> {}
 
 impl actix_web::ResponseError for AppError {
     fn status_code(&self) -> StatusCode {
