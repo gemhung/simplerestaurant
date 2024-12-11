@@ -56,7 +56,7 @@ Please check the follwing test case
 |-------|------|--------|---|
 | POST  |  /items | Add a new order with a specified table1  | [link](#-add-a-new-order) |
 | GET  |  /items?table={`table_num`}  | Query all items with a specified table where `table_num` is an integer `between 1 and 100`| [link](#-query-all-items-with-specified-table) |
-| GET  |  /items/{`food_name`}?table={`table_num`}  | Query all items with a specified table and a specified item where `table_num` is an `integer` between `1 and 100` and `food_name` is a `string` (ex: noodle, rice ...)| [link](#-query-all-items-with-specified-table-and-specified-food name) |
+| GET  |  /items/{`food_name`}?table={`table_num`}  | Query all items with a specified table and a specified item where `table_num` is an `integer` between `1 and 100` and `food_name` is a `string` (ex: noodle, rice ...)| [link](#-query-all-items-with-specified-table-and-specified-food-name) |
 | DELETE  | /items  | Cancel an existing order with a specified table |  [link](#-cancel-an-order)  |
 
 
