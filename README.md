@@ -19,7 +19,7 @@ The application MUST, upon creation request, store the item, the table number, a
 * As a serving staff, I’d like to `get` a specified item (e.g food name) for a specified table. If `there are 2 more items that shares a item name, return all of them`.
 * As a serving staff, I’d like to `cancel` an existing item for a specified table
 
-## Non-functional requirements:
+## Non-functional requirements
 * When `adding` a new item it should be `idempotent`
 * When `canceling` an item, it should be `idempotent`
 * Availability > consistency
@@ -41,14 +41,20 @@ The application MUST, upon creation request, store the item, the table number, a
 ### Tables definition
 ![image](./pictures/database_tables.png)
 
-## Highlight
+## Highlights
 * This implmenetation focuses more on making it right under `multi-threading` enviroment rather than adding too much business logic
 * This implmenetation focuses more on making `adding` or `canceling` order `idempotent`
 * This implmenetation focuses more on writing solid tests, error handle, CI and docker
 * This implementation uses `sqlx` to crud database using `raw sql` rather than any `orm` tool to meet the homework requirements
- >The application MUST accept at least 10 simultaneous incoming add/remove/query requests 
 
+## Idempotency
+* Adding or canceling an order is idempotent
+* Cancel an order that was canceled previously is a valid operation
+
+## Multi-threads support
+ >The application MUST accept at least 10 simultaneous incoming add/remove/query requests 
 Please check the follwing test case   
+
 [concurrent_create_orders](https://github.com/gemhung/simplerestaurant/blob/main/tests/api/orders.rs#L178-L208)
 
 ## RESTful api endpoints
