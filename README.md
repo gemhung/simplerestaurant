@@ -32,6 +32,14 @@ The application MUST, upon creation request, store the item, the table number, a
 * For simplicity purpose, the `inputs` and `outputs` are encoded using `json` format
 * For simplicity purpose, we can assume the parameters such as `food_name` or `table_num` are already `sanitized`
 
+## RESTful api endpoints
+| Verb  | Url  |  Note  | detail |
+|-------|------|--------|---|
+| POST  |  /items | Add a new order with a specified table1  | [link](#-add-a-new-order) |
+| GET  |  /items?table={`table_num`}  | Query all items with a specified table where `table_num` is an integer `between 1 and 100`| [link](#-query-all-items-with-specified-table) |
+| GET  |  /items/{`food_name`}?table={`table_num`}  | Query all items with a specified table and a specified item where `table_num` is an `integer` between `1 and 100` and `food_name` is a `string` (ex: noodle, rice ...)| [link](#-query-all-items-with-specified-table-and-specified-food-name) |
+| DELETE  | /items  | Cancel an existing order with a specified table |  [link](#-cancel-an-order)  |
+
 # Postgres design
 * In previous assumptions, the table ranges from 1 to 100  
 * Each table should be `independent` from another table so database can process orders concurrently for different tables
@@ -55,15 +63,6 @@ The application MUST, upon creation request, store the item, the table number, a
 Please check the follwing test case   
 
 [concurrent_create_orders](https://github.com/gemhung/simplerestaurant/blob/main/tests/api/orders.rs#L178-L208)
-
-## RESTful api endpoints
-| Verb  | Url  |  Note  | detail |
-|-------|------|--------|---|
-| POST  |  /items | Add a new order with a specified table1  | [link](#-add-a-new-order) |
-| GET  |  /items?table={`table_num`}  | Query all items with a specified table where `table_num` is an integer `between 1 and 100`| [link](#-query-all-items-with-specified-table) |
-| GET  |  /items/{`food_name`}?table={`table_num`}  | Query all items with a specified table and a specified item where `table_num` is an `integer` between `1 and 100` and `food_name` is a `string` (ex: noodle, rice ...)| [link](#-query-all-items-with-specified-table-and-specified-food-name) |
-| DELETE  | /items  | Cancel an existing order with a specified table |  [link](#-cancel-an-order)  |
-
 
 ## Tech stack
 * rust, actix-web, sqlx, tokio, tracing, serde
