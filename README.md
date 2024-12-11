@@ -48,8 +48,7 @@ The application MUST, upon creation request, store the item, the table number, a
 * This implementation uses `sqlx` to crud database using `raw sql` rather than any `orm` tool to meet the homework requirements
 
 ## Idempotency
-* Adding or canceling an order is idempotent
-* Cancel an order that was canceled previously is a valid operation
+![image](./pictures/idempotency.png)
 
 ## Multi-threads support
  >The application MUST accept at least 10 simultaneous incoming add/remove/query requests 
