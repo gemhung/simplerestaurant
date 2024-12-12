@@ -280,6 +280,11 @@ curl --header "Content-Type: application/json" --request DELETE --data '{"item_i
 ```
 
 
+## Known issues
+* If you see `warnings` like below when launching the application, 
+![image](./pictures/sqlx_warning.png)
+it's harmless and a tracking issue in `sqlx 0.8`. See [sqlx-3531](https://github.com/launchbadge/sqlx/issues/3531) for more information
+
 
 
 
