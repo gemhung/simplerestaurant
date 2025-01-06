@@ -3,7 +3,6 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
 pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
-    //PgPoolOptions::new().connect_lazy_with(configuration.connect_options())
     PgPoolOptions::new()
         .test_before_acquire(false)
         .connect_lazy_with(configuration.connect_options())

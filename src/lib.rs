@@ -4,4 +4,5 @@ pub mod controllers;
 pub mod errors;
 pub mod idempotency;
 pub mod models;
+pub mod prometheus;
 pub mod utils;
