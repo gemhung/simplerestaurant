@@ -91,6 +91,20 @@ cargo install --version="~0.7" sqlx-cli --no-default-features --features rustls,
 ./init_db.sh
 ```
 
+### Launch `prometheus` and `grafana` for monitoring (optional)
+```bash
+# Launching dockers
+docker-compose -f docker_compose_prometheus_grafana.yaml up -d
+
+# checking grafana
+curl localhost:3000
+
+# checking prometheus
+curl localhost:9091
+
+# For more information, see https://betterprogramming.pub/monitoring-a-rust-web-application-using-prometheus-and-grafana-3c75d9435dec
+```
+
 ### Install psql (optional)
 ```bash
 brew install libpq
@@ -111,6 +125,7 @@ restaurant=#
 ```bash
 cargo run --relase | bunyan
 ```
+
 
 ## # Add a new order
 ### simplerestaurant_client
